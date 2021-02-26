@@ -1,0 +1,9 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:configure="pl.marczak.appwidgetdemo.config.ConfigureWidgetActivity"
+    android:initialLayout="@layout/appwidget_stopwatch"
+    android:minWidth="110dp"
+    android:minHeight="80dp"
+    android:previewImage="@drawable/appwidget_preview"
+    android:resizeMode="none"
+    android:updatePeriodMillis="60000"
+    android:widgetCategory="home_screen" />

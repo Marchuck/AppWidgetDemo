@@ -5,7 +5,6 @@ import java.io.Serializable
 
 data class WidgetViewState(
     val widgetId: Int,
-    val modelId: String,
     val name: String,
     @ColorInt val backgroundColor: Int,
     val isRunning: Boolean,

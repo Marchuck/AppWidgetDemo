@@ -1,15 +1,9 @@
 package pl.marczak.appwidgetdemo
 
+import android.annotation.SuppressLint
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.createDataStore
+import androidx.core.content.edit
 import com.google.gson.Gson
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 
 class AppWidgetPreferences(context: Context) {
 
@@ -19,27 +13,39 @@ class AppWidgetPreferences(context: Context) {
 
     private val gson = Gson()
 
-    private val dataStore: DataStore<Preferences> =
-        context.createDataStore(name = "app_widget")
+    private val sharedPreferences = context
+        .applicationContext
+        .getSharedPreferences("app_widgets", Context.MODE_PRIVATE)
 
-    suspend fun saveWidget(state: WidgetViewState) {
-        dataStore.edit { settings ->
-            settings[keyOf(state.modelId)] = gson.toJson(state)
+    @SuppressLint("ApplySharedPref")
+    fun saveWidget(state: WidgetViewState) {
+        sharedPreferences.edit(commit = true) {
+            putString(keyNameOf(state.widgetId), gson.toJson(state))
         }
     }
 
-    fun getWidget(modelId: String): Flow<WidgetViewState?> {
-        return dataStore.data.map {
-            val json = it[keyOf(modelId)]
-            try {
-                gson.fromJson(json, WidgetViewState::class.java)
-            } catch (error: Throwable) {
-                null
+    fun getWidget(widgetId: Int): WidgetViewState? {
+        val json = sharedPreferences.getString(keyNameOf(widgetId), null) ?: return null
+        return try {
+            gson.fromJson(json, WidgetViewState::class.java)
+        } catch (error: Throwable) {
+            null
+        }
+    }
+
+    fun removeWidgets(ids: IntArray) {
+        sharedPreferences.edit(commit = true) {
+            ids.forEach {
+                remove(keyNameOf(it))
             }
         }
     }
 
-    private fun keyOf(modelId: String): Preferences.Key<String> {
-        return stringPreferencesKey("$KEY_WIDGET_VIEWSTATE_$modelId")
+    fun widgets(ids: IntArray): List<WidgetViewState> {
+        return ids.toList().mapNotNull { getWidget(it) }
+    }
+
+    private fun keyNameOf(widgetId: Int): String {
+        return "$KEY_WIDGET_VIEWSTATE_$widgetId"
     }
 }

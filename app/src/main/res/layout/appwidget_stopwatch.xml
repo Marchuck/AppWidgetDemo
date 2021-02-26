@@ -3,9 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/appwidget_root"
     android:layout_width="120dp"
-    android:layout_height="60dp"
+    android:layout_height="120dp"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:background="#dddddd">
 
     <TextView
         android:id="@+id/timer_name"
@@ -28,7 +29,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingHorizontal="2dp"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
             android:textColor="@color/black"
             tools:text="00:00" />
 
@@ -36,9 +38,17 @@
             android:id="@+id/play_or_pause"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_play" />
+            android:layout_gravity="center" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/last_updated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingStart="2dp"
+        android:paddingEnd="2dp"
+        android:textColor="@color/black"
+        tools:text="00:00" />
 
 </LinearLayout>
