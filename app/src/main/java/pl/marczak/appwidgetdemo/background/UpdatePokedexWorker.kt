@@ -21,28 +21,35 @@ class UpdatePokedexWorker(
     CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-        val pokemonId = workerParams.inputData.getInt("POKEMON_ID", -1)
-        val widgetId = workerParams.inputData.getInt("WIDGET_ID", -1)
-        if (pokemonId != -1 && widgetId != -1) {
+        val pokemonIds = workerParams.inputData.getIntArray(POKEMON_IDS)
+        val widgetIds = workerParams.inputData.getIntArray(WIDGET_IDS)
+        if (pokemonIds != null && widgetIds != null) {
 
             val renderer = PokedexRenderer(applicationContext)
             val client = PokeClient(Gson())
-            val viewState =
+
+            for (value in widgetIds.withIndex()) {
+                val index = value.index
+                val widgetId = value.value
+                val pokemonId = pokemonIds[index]
+
                 providePokeViewState(
                     client,
                     pokemonId,
                     widgetId
-                ) ?: return Result.failure()
+                )?.let { viewState ->
 
-            val remoteViews = renderer.render(viewState)
+                    val remoteViews = renderer.render(viewState)
 
-            val intent = Intent(context, PokedexWidgetProvider::class.java).apply {
-                action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-                putExtra(PokedexWidgetProvider.EXTRA_ID, pokemonId)
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-                putExtra(PokedexWidgetProvider.EXTRA_REMOTE_VIEWS, remoteViews)
+                    val intent = Intent(context, PokedexWidgetProvider::class.java).apply {
+                        action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                        putExtra(PokedexWidgetProvider.EXTRA_ID, pokemonId)
+                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+                        putExtra(PokedexWidgetProvider.EXTRA_REMOTE_VIEWS, remoteViews)
+                    }
+                    context.sendBroadcast(intent)
+                }
             }
-            context.sendBroadcast(intent)
             return Result.success()
         } else {
             return Result.failure()
@@ -59,7 +66,8 @@ class UpdatePokedexWorker(
         ): PokedexViewState.Poke? {
             return try {
                 val pokeResponse = pokeClient.getPokemon(pokemonId)
-                val drawable = Coil.loader().get(uri = pokeResponse.sprites.front_default) as? BitmapDrawable
+                val drawable =
+                    Coil.loader().get(uri = pokeResponse.sprites.front_default) as? BitmapDrawable
 
                 PokedexViewState.Poke(
                     pokemonId,
@@ -74,14 +82,16 @@ class UpdatePokedexWorker(
         }
 
         private const val TAG_APPWIDGET_UPDATE = "TAG_APPWIDGET_UPDATE"
+        private const val WIDGET_IDS = "WIDGET_IDS"
+        private const val POKEMON_IDS = "POKEMON_IDS"
 
         @JvmStatic
-        fun enqueue(context: Context, id: Int, widgetId: Int) {
+        fun enqueue(context: Context, widgetIds: IntArray, pokemonIds: IntArray) {
             val request = OneTimeWorkRequestBuilder<UpdatePokedexWorker>()
                 .setInputData(
                     workDataOf(
-                        "POKEMON_ID" to id,
-                        "WIDGET_ID" to widgetId
+                        POKEMON_IDS to pokemonIds,
+                        WIDGET_IDS to widgetIds
                     )
                 )
                 .build()

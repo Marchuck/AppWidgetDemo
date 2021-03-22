@@ -51,14 +51,18 @@ class PokedexWidgetProvider : AppWidgetProvider() {
                             )
                         )
                     )
-                    UpdatePokedexWorker.enqueue(context, targetPokemonId, widgetId)
+                    UpdatePokedexWorker.enqueue(
+                        context,
+                        intArrayOf(widgetId),
+                        intArrayOf(targetPokemonId)
+                    )
                 }
             }
             else -> {
                 if (intent.hasExtra(EXTRA_REMOTE_VIEWS)) {
                     val views = intent.getParcelableExtra<RemoteViews>(EXTRA_REMOTE_VIEWS)
                     context.appWidgetManager.updateAppWidget(widgetId, views)
-                }else{
+                } else {
                     super.onReceive(context, intent)
                 }
             }
@@ -71,9 +75,11 @@ class PokedexWidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         val prefs = PokedexPreferences(context)
-        for (id in appWidgetIds) {
-            UpdatePokedexWorker.enqueue(context, prefs.retrieve(id), id)
-        }
+        UpdatePokedexWorker.enqueue(
+            context,
+            appWidgetIds,
+            appWidgetIds.map(prefs::retrieve).toIntArray()
+        )
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
