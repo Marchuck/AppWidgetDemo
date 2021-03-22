@@ -2,7 +2,8 @@ package pl.marczak.appwidgetdemo.background
 
 import android.content.Context
 import androidx.work.*
-import pl.marczak.appwidgetdemo.MyWidgetProvider
+import pl.marczak.appwidgetdemo.goasyncsample.MyWidgetProvider
+import pl.marczak.appwidgetdemo.workManager
 import java.util.concurrent.TimeUnit
 
 class UpdateWidgetsWorker(appContext: Context, workerParams: WorkerParameters) :
@@ -16,19 +17,21 @@ class UpdateWidgetsWorker(appContext: Context, workerParams: WorkerParameters) :
 
         private const val TAG_PERIODIC_APPWIDGETS_UPDATE = "TAG_PERIODIC_APPWIDGETS_UPDATE"
 
-        @JvmStatic
         fun startPeriodically(context: Context) {
             val request = PeriodicWorkRequestBuilder<UpdateWidgetsWorker>(
                 repeatInterval = 15,
                 repeatIntervalTimeUnit = TimeUnit.MINUTES
             ).build()
 
-            val workManager = WorkManager.getInstance(context)
-            workManager.enqueueUniquePeriodicWork(
+            context.workManager.enqueueUniquePeriodicWork(
                 TAG_PERIODIC_APPWIDGETS_UPDATE,
-                ExistingPeriodicWorkPolicy.KEEP,
+                ExistingPeriodicWorkPolicy.REPLACE,
                 request
             )
+        }
+
+        fun stopPeriodicUpdates(context: Context) {
+            context.workManager.cancelUniqueWork(TAG_PERIODIC_APPWIDGETS_UPDATE)
         }
     }
 }

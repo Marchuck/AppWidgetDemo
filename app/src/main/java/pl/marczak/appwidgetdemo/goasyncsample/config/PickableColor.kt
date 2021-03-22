@@ -1,4 +1,4 @@
-package pl.marczak.appwidgetdemo.config
+package pl.marczak.appwidgetdemo.goasyncsample.config
 
 import android.graphics.Color
 import androidx.annotation.ColorInt

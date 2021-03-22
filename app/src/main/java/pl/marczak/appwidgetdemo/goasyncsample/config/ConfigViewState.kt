@@ -1,4 +1,4 @@
-package pl.marczak.appwidgetdemo.config
+package pl.marczak.appwidgetdemo.goasyncsample.config
 
 data class ConfigViewState(
     val widgetName: String,

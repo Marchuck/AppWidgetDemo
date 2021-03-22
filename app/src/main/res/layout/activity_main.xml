@@ -7,6 +7,13 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <androidx.appcompat.widget.SwitchCompat
+        android:layout_margin="16dp"
+        android:id="@+id/switch_periodic_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="periodic update" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,11 +1,11 @@
-package pl.marczak.appwidgetdemo
+package pl.marczak.appwidgetdemo.goasyncsample
 
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.core.content.edit
 import com.google.gson.Gson
 
-class AppWidgetPreferences(context: Context) {
+class MyWidgetPreferences(context: Context) {
 
     companion object {
         const val KEY_WIDGET_VIEWSTATE_ = "KEY_WIDGET_VIEWSTATE_"
@@ -18,30 +18,28 @@ class AppWidgetPreferences(context: Context) {
         .getSharedPreferences("app_widgets", Context.MODE_PRIVATE)
 
     @SuppressLint("ApplySharedPref")
-    fun saveWidget(state: WidgetViewState) {
+    fun saveWidget(stateMy: MyWidgetViewState) {
         sharedPreferences.edit(commit = true) {
-            putString(keyNameOf(state.widgetId), gson.toJson(state))
+            putString(keyNameOf(stateMy.widgetId), gson.toJson(stateMy))
         }
     }
 
-    fun getWidget(widgetId: Int): WidgetViewState? {
+    fun getWidget(widgetId: Int): MyWidgetViewState? {
         val json = sharedPreferences.getString(keyNameOf(widgetId), null) ?: return null
         return try {
-            gson.fromJson(json, WidgetViewState::class.java)
+            gson.fromJson(json, MyWidgetViewState::class.java)
         } catch (error: Throwable) {
             null
         }
     }
 
-    fun removeWidgets(ids: IntArray) {
+    fun removeWidget(id: Int) {
         sharedPreferences.edit(commit = true) {
-            ids.forEach {
-                remove(keyNameOf(it))
-            }
+            remove(keyNameOf(id))
         }
     }
 
-    fun widgets(ids: IntArray): List<WidgetViewState> {
+    fun widgets(ids: IntArray): List<MyWidgetViewState> {
         return ids.toList().mapNotNull { getWidget(it) }
     }
 

@@ -1,24 +1,23 @@
-package pl.marczak.appwidgetdemo.config
+package pl.marczak.appwidgetdemo.goasyncsample.config
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import pl.marczak.appwidgetdemo.AppWidgetPreferences
-import pl.marczak.appwidgetdemo.MyWidgetProvider
-import pl.marczak.appwidgetdemo.MyWidgetProvider.Companion.isValidAppWidgetId
-import pl.marczak.appwidgetdemo.WidgetViewState
+import pl.marczak.appwidgetdemo.goasyncsample.MyWidgetPreferences
+import pl.marczak.appwidgetdemo.NO_ID
+import pl.marczak.appwidgetdemo.goasyncsample.MyWidgetViewState
+import pl.marczak.appwidgetdemo.isValidAppWidgetId
 
 
 class ConfigureWidgetViewModel constructor(
-    private val appWidgetPreferences: AppWidgetPreferences
+    private val myWidgetPreferences: MyWidgetPreferences
 ) : ViewModel() {
 
     val viewState = MutableLiveData(
         ConfigViewState(
             widgetName = "",
-            widgetId = MyWidgetProvider.NO_ID,
+            widgetId = NO_ID,
             backgroundColor = PickableColor.NONE,
             createButtonEnabled = false,
             isDone = false
@@ -64,14 +63,14 @@ class ConfigureWidgetViewModel constructor(
             runCatching {
                 requireNotNull(viewState.value).apply {
                     val widget =
-                        WidgetViewState(
+                        MyWidgetViewState(
                             widgetId,
                             widgetName,
                             backgroundColor.color,
                             isRunning = false,
                             isLoading = false
                         )
-                    appWidgetPreferences.saveWidget(widget)
+                    myWidgetPreferences.saveWidget(widget)
                 }
             }.onFailure {
                 viewState.value = viewState.value?.copy(isDone = false, error = it)

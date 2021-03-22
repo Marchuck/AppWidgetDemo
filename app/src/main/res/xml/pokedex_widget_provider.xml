@@ -1,0 +1,9 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:configure="pl.marczak.appwidgetdemo.pokesample.ConfigurePokedexActivity"
+    android:initialLayout="@layout/appwidget_pokedex"
+    android:minWidth="120dp"
+    android:minHeight="120dp"
+    android:previewImage="@drawable/appwidget_pokedex_preview"
+    android:resizeMode="none"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen" />

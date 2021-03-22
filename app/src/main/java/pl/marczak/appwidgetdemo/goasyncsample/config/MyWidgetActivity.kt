@@ -1,21 +1,20 @@
-package pl.marczak.appwidgetdemo.config
+package pl.marczak.appwidgetdemo.goasyncsample.config
 
 import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.LifecycleOwner
 import pl.marczak.appwidgetdemo.*
-import pl.marczak.appwidgetdemo.MyWidgetProvider.Companion.appWidgetId
-import pl.marczak.appwidgetdemo.MyWidgetProvider.Companion.isValidAppWidgetId
 import pl.marczak.appwidgetdemo.databinding.ActivityConfigureWidgetBinding
-import timber.log.Timber
+import pl.marczak.appwidgetdemo.goasyncsample.MyWidgetPreferences
+import pl.marczak.appwidgetdemo.goasyncsample.MyWidgetProvider
+import pl.marczak.appwidgetdemo.goasyncsample.updateWidget
 
-class ConfigureWidgetActivity : AppCompatActivity() {
+class MyWidgetActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityConfigureWidgetBinding
 
@@ -31,7 +30,7 @@ class ConfigureWidgetActivity : AppCompatActivity() {
             finish()
         } else {
             viewModel = ConfigureWidgetViewModel(
-                AppWidgetPreferences(applicationContext)
+                MyWidgetPreferences(applicationContext)
             )
             configureAppWidget(widgetId)
         }
@@ -91,8 +90,7 @@ class ConfigureWidgetActivity : AppCompatActivity() {
     }
 
     private fun finishWithResult(widgetId: Int) {
-
-        applicationContext.updateWidgets(intArrayOf(widgetId))
+        applicationContext.updateWidget(widgetId)
 
         val resultValue = MyWidgetProvider.newWidget(widgetId)
         setResult(Activity.RESULT_OK, resultValue)
