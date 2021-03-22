@@ -75,10 +75,24 @@ class PokedexWidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         val prefs = PokedexPreferences(context)
+        val renderer = PokedexRenderer(context)
+        val pokemonIds = mutableListOf<Int>()
+        for (widgetId in appWidgetIds) {
+            val pokemonId = prefs.retrieve(widgetId)
+            pokemonIds.add(pokemonId)
+
+            val remoteViews = renderer.render(
+                PokedexViewState.Loading(
+                    pokemonId,
+                    widgetId
+                )
+            )
+            appWidgetManager.updateAppWidget(widgetId, remoteViews)
+        }
         UpdatePokedexWorker.enqueue(
             context,
             appWidgetIds,
-            appWidgetIds.map(prefs::retrieve).toIntArray()
+            pokemonIds.toIntArray()
         )
     }
 
