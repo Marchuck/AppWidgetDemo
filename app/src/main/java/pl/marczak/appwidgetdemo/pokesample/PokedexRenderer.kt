@@ -8,6 +8,7 @@ import android.widget.RemoteViews
 import pl.marczak.appwidgetdemo.R
 import pl.marczak.appwidgetdemo.pokesample.PokedexWidgetProvider.Companion.ACTION_NEXT
 import pl.marczak.appwidgetdemo.pokesample.PokedexWidgetProvider.Companion.ACTION_PREV
+import java.util.*
 
 class PokedexRenderer(private val context: Context) {
 
@@ -42,9 +43,6 @@ class PokedexRenderer(private val context: Context) {
             }
             is PokedexViewState.Loading -> {
                 remoteViews.setTextViewText(R.id.poke_name, "#${state.id}\nLoading...")
-            }
-            is PokedexViewState.Error -> {
-                remoteViews.setTextViewText(R.id.poke_name, "Loading error!\ntap to retry")
                 val click = clickPendingIntent(
                     widgetId = state.widgetId,
                     targetId = state.id,
@@ -52,6 +50,19 @@ class PokedexRenderer(private val context: Context) {
                 )
                 remoteViews.setOnClickPendingIntent(R.id.poke_image, click)
                 remoteViews.setOnClickPendingIntent(R.id.poke_name, click)
+            }
+            is PokedexViewState.Error -> {
+                remoteViews.setTextViewText(
+                    R.id.poke_name,
+                    "Failed to load #${state.id}\ntap to retry"
+                )
+                val pendingIntent = clickPendingIntent(
+                    widgetId = state.widgetId,
+                    targetId = state.id,
+                    action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                )
+                remoteViews.setOnClickPendingIntent(R.id.poke_image, pendingIntent)
+                remoteViews.setOnClickPendingIntent(R.id.poke_name, pendingIntent)
             }
         }
         return remoteViews
@@ -61,10 +72,10 @@ class PokedexRenderer(private val context: Context) {
         widgetId: Int,
         targetId: Int,
         action: String
-    ): PendingIntent? {
+    ): PendingIntent {
         return PendingIntent.getBroadcast(
             context,
-            widgetId,
+            Objects.hash(action, widgetId),
             Intent(context, PokedexWidgetProvider::class.java).apply {
                 this.action = action
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)

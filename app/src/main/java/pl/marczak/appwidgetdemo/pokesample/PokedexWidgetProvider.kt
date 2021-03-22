@@ -8,7 +8,6 @@ import android.widget.RemoteViews
 import pl.marczak.appwidgetdemo.appWidgetId
 import pl.marczak.appwidgetdemo.appWidgetManager
 import pl.marczak.appwidgetdemo.background.UpdatePokedexWorker
-import pl.marczak.appwidgetdemo.debug
 import pl.marczak.appwidgetdemo.isValidAppWidgetId
 
 
@@ -28,9 +27,15 @@ class PokedexWidgetProvider : AppWidgetProvider() {
         }
     }
 
+    private var preferences: PokedexPreferences? = null
+    private var renderer: PokedexRenderer? = null
+
     override fun onReceive(context: Context, intent: Intent) {
         val pokemonId = intent.getIntExtra(EXTRA_ID, 1)
         val widgetId = intent.extras.appWidgetId
+
+        preferences = PokedexPreferences(context)
+        renderer = PokedexRenderer(context)
 
         when (intent.action) {
             ACTION_NEXT, ACTION_PREV -> {
@@ -40,22 +45,8 @@ class PokedexWidgetProvider : AppWidgetProvider() {
                         ACTION_PREV -> (pokemonId - 1).coerceAtLeast(MIN_POKE_ID)
                         else -> pokemonId
                     }
-
-                    PokedexPreferences(context).store(widgetId, targetPokemonId)
-                    context.appWidgetManager.updateAppWidget(
-                        widgetId,
-                        PokedexRenderer(context).render(
-                            PokedexViewState.Loading(
-                                targetPokemonId,
-                                widgetId
-                            )
-                        )
-                    )
-                    UpdatePokedexWorker.enqueue(
-                        context,
-                        intArrayOf(widgetId),
-                        intArrayOf(targetPokemonId)
-                    )
+                    preferences?.store(widgetId, targetPokemonId)
+                    onUpdate(context, context.appWidgetManager, intArrayOf(widgetId))
                 }
             }
             else -> {
@@ -74,14 +65,12 @@ class PokedexWidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        val prefs = PokedexPreferences(context)
-        val renderer = PokedexRenderer(context)
         val pokemonIds = mutableListOf<Int>()
         for (widgetId in appWidgetIds) {
-            val pokemonId = prefs.retrieve(widgetId)
+            val pokemonId = preferences?.retrieve(widgetId) ?: continue
             pokemonIds.add(pokemonId)
 
-            val remoteViews = renderer.render(
+            val remoteViews = renderer?.render(
                 PokedexViewState.Loading(
                     pokemonId,
                     widgetId
@@ -97,6 +86,6 @@ class PokedexWidgetProvider : AppWidgetProvider() {
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        PokedexPreferences(context).delete(appWidgetIds)
+        preferences?.delete(appWidgetIds)
     }
 }

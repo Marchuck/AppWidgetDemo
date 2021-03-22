@@ -1,4 +1,4 @@
-package pl.marczak.appwidgetdemo.pokesample
+package pl.marczak.appwidgetdemo.pokesample.config
 
 import android.app.Activity
 import android.os.Bundle
@@ -13,6 +13,7 @@ import pl.marczak.appwidgetdemo.appWidgetManager
 import pl.marczak.appwidgetdemo.background.UpdatePokedexWorker
 import pl.marczak.appwidgetdemo.databinding.ActivityPokedexBinding
 import pl.marczak.appwidgetdemo.isValidAppWidgetId
+import pl.marczak.appwidgetdemo.pokesample.*
 import pl.marczak.appwidgetdemo.pokesample.PokedexWidgetProvider.Companion.MAX_POKE_ID
 import pl.marczak.appwidgetdemo.pokesample.PokedexWidgetProvider.Companion.MIN_POKE_ID
 
@@ -54,11 +55,7 @@ class ConfigurePokedexActivity : AppCompatActivity() {
             val renderer = PokedexRenderer(applicationContext)
             val client = PokeClient(Gson())
             val viewState = UpdatePokedexWorker.providePokeViewState(client, pokemonId, widgetId)
-            if (viewState == null) {
-                Toast.makeText(applicationContext, "Failed to save poke", Toast.LENGTH_SHORT).show()
-                finish()
-                return@launch
-            }
+                ?: PokedexViewState.Error(pokemonId, widgetId)
             PokedexPreferences(applicationContext).store(widgetId, pokemonId)
             appWidgetManager.updateAppWidget(widgetId, renderer.render(viewState))
             exitWithResult(widgetId)

@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.recyclerView.adapter = adapter
 
-
         binding.switchPeriodicUpdate.setOnCheckedChangeListener { buttonView, isChecked ->
             togglePeriodicUpdates(
                 isChecked

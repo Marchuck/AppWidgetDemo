@@ -1,5 +1,5 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:configure="pl.marczak.appwidgetdemo.pokesample.ConfigurePokedexActivity"
+    android:configure="pl.marczak.appwidgetdemo.pokesample.config.ConfigurePokedexActivity"
     android:initialLayout="@layout/appwidget_pokedex"
     android:minWidth="120dp"
     android:minHeight="120dp"

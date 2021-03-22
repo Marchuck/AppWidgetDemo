@@ -33,22 +33,22 @@ class UpdatePokedexWorker(
                 val widgetId = value.value
                 val pokemonId = pokemonIds[index]
 
-                providePokeViewState(
+                val viewState = providePokeViewState(
                     client,
                     pokemonId,
                     widgetId
-                )?.let { viewState ->
+                ) ?: PokedexViewState.Error(pokemonId, widgetId)
 
-                    val remoteViews = renderer.render(viewState)
+                val remoteViews = renderer.render(viewState)
 
-                    val intent = Intent(context, PokedexWidgetProvider::class.java).apply {
-                        action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-                        putExtra(PokedexWidgetProvider.EXTRA_ID, pokemonId)
-                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-                        putExtra(PokedexWidgetProvider.EXTRA_REMOTE_VIEWS, remoteViews)
-                    }
-                    context.sendBroadcast(intent)
+                val intent = Intent(context, PokedexWidgetProvider::class.java).apply {
+                    action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                    putExtra(PokedexWidgetProvider.EXTRA_ID, pokemonId)
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+                    putExtra(PokedexWidgetProvider.EXTRA_REMOTE_VIEWS, remoteViews)
                 }
+                context.sendBroadcast(intent)
+
             }
             return Result.success()
         } else {
@@ -63,7 +63,7 @@ class UpdatePokedexWorker(
             pokeClient: PokeClient,
             pokemonId: Int,
             widgetId: Int
-        ): PokedexViewState.Poke? {
+        ): PokedexViewState? {
             return try {
                 val pokeResponse = pokeClient.getPokemon(pokemonId)
                 val drawable =
