@@ -29,7 +29,13 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
+
         <activity android:name=".pokesample.config.ConfigurePokedexActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".viewflipper.FlipperActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
@@ -53,6 +59,16 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/pokedex_widget_provider" />
+        </receiver>
+
+        <receiver android:name=".viewflipper.FlipperProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/flipper_provider" />
         </receiver>
 
         <provider
