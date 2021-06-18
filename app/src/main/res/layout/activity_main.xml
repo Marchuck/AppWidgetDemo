@@ -7,6 +7,13 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <Button
+        android:id="@+id/pin_widget"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:text="pin poke widget" />
+
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switch_periodic_update"
         android:layout_width="match_parent"
@@ -14,40 +21,4 @@
         android:layout_margin="16dp"
         android:text="periodic update" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="16dp"
-        android:text="Your widgets"
-        android:textColor="#000"
-        android:textSize="20dp"
-        android:textStyle="bold|italic" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#dddddd" />
-
-    <TextView
-        android:id="@+id/widgets_empty"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="16dp"
-        android:text="No widgets so far"
-        android:textColor="#000"
-        android:textSize="24dp"
-        android:textStyle="normal"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/appwidget_stopwatch" />
 </LinearLayout>

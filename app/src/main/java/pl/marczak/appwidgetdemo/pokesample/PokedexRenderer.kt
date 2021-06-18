@@ -72,16 +72,27 @@ class PokedexRenderer(private val context: Context) {
         widgetId: Int,
         targetId: Int,
         action: String
-    ): PendingIntent {
-        return PendingIntent.getBroadcast(
-            context,
-            Objects.hash(action, widgetId),
-            Intent(context, PokedexWidgetProvider::class.java).apply {
-                this.action = action
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-                putExtra(PokedexWidgetProvider.EXTRA_ID, targetId)
-            },
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
+    ) = clickPendingIntent(context, widgetId, targetId, action)
+
+    companion object {
+
+        @JvmStatic
+        fun clickPendingIntent(
+            context: Context,
+            widgetId: Int,
+            targetId: Int,
+            action: String
+        ): PendingIntent {
+            return PendingIntent.getBroadcast(
+                context,
+                Objects.hash(action, widgetId),
+                Intent(context, PokedexWidgetProvider::class.java).apply {
+                    this.action = action
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+                    putExtra(PokedexWidgetProvider.EXTRA_ID, targetId)
+                },
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        }
     }
 }

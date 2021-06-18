@@ -25,5 +25,4 @@ class FlipperActivity : AppCompatActivity() {
         setResult(Activity.RESULT_OK, resultValue)
         finish()
     }
-
 }

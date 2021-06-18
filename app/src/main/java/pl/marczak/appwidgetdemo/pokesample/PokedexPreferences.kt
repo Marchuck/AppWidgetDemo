@@ -15,7 +15,7 @@ class PokedexPreferences(context: Context) {
     }
 
     fun retrieve(widgetId: Int): Int {
-        return sharedPreferences.getInt(widgetId.toString(), widgetId)
+        return sharedPreferences.getInt(widgetId.toString(), -1)
     }
 
     fun delete(appWidgetIds: IntArray) {

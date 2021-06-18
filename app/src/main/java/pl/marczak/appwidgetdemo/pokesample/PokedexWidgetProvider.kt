@@ -19,6 +19,7 @@ class PokedexWidgetProvider : AppWidgetProvider() {
         val EXTRA_REMOTE_VIEWS: String = "EXTRA_REMOTE_VIEWS"
         val ACTION_NEXT = "ACTION_NEXT"
         val ACTION_PREV = "ACTION_PREV"
+        val ACTION_CURRENT = "ACTION_CURRENT"
         val MIN_POKE_ID = 1
         val MAX_POKE_ID = 898
 
@@ -31,14 +32,14 @@ class PokedexWidgetProvider : AppWidgetProvider() {
     private var renderer: PokedexRenderer? = null
 
     override fun onReceive(context: Context, intent: Intent) {
-        val pokemonId = intent.getIntExtra(EXTRA_ID, 1)
+        val pokemonId = intent.getIntExtra(EXTRA_ID, -1)
         val widgetId = intent.extras.appWidgetId
 
         preferences = PokedexPreferences(context)
         renderer = PokedexRenderer(context)
 
         when (intent.action) {
-            ACTION_NEXT, ACTION_PREV -> {
+            ACTION_NEXT, ACTION_PREV, ACTION_CURRENT -> {
                 if (widgetId.isValidAppWidgetId) {
                     val targetPokemonId = when (intent.action) {
                         ACTION_NEXT -> (pokemonId + 1).coerceAtMost(MAX_POKE_ID)
@@ -69,7 +70,6 @@ class PokedexWidgetProvider : AppWidgetProvider() {
         for (widgetId in appWidgetIds) {
             val pokemonId = preferences?.retrieve(widgetId) ?: continue
             pokemonIds.add(pokemonId)
-
             val remoteViews = renderer?.render(
                 PokedexViewState.Loading(
                     pokemonId,

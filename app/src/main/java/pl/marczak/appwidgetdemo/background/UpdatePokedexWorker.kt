@@ -65,6 +65,9 @@ class UpdatePokedexWorker(
             widgetId: Int
         ): PokedexViewState? {
             return try {
+                if (pokemonId == -1) {
+                    return null
+                }
                 val pokeResponse = pokeClient.getPokemon(pokemonId)
                 val drawable =
                     Coil.loader().get(uri = pokeResponse.sprites.front_default) as? BitmapDrawable
@@ -98,7 +101,7 @@ class UpdatePokedexWorker(
 
             context.workManager.enqueueUniqueWork(
                 TAG_APPWIDGET_UPDATE,
-                ExistingWorkPolicy.APPEND,
+                ExistingWorkPolicy.APPEND_OR_REPLACE,
                 request
             )
         }
